@@ -20,7 +20,7 @@ namespace WebAPISampleApp.Controllers
             return Ok(Products);
         }
 
-        [HttpGet("id")]
+        [HttpGet("{id}")]
         public IActionResult GetById(string id)
         {
             try
@@ -56,7 +56,7 @@ namespace WebAPISampleApp.Controllers
             return Ok( new { Success= true, Data = product });
         }
 
-        [HttpPut("id")]
+        [HttpPut("{id}")]
         public IActionResult Edit(string id, ProductVM editProduct)
         {
             try
@@ -81,7 +81,7 @@ namespace WebAPISampleApp.Controllers
             }
         }
 
-        [HttpDelete("id")]
+        [HttpDelete("{id}")]
         public IActionResult Remove(string id)
         {
             try
