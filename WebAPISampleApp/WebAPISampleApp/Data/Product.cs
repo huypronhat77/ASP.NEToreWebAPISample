@@ -26,5 +26,13 @@ namespace WebAPISampleApp.Data
         public int? CatId { get; set; }
         [ForeignKey("CatId")]
         public Category Category { get; set; }
+
+        // Relationship
+        public ICollection<OrderDetail> OrderDetails { get; set; }
+
+        public Product()
+        {
+            OrderDetails = new List<OrderDetail>();
+        }
     }
 }
