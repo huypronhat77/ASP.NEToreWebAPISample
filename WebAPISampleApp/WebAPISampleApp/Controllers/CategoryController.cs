@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebAPISampleApp.Data;
 using WebAPISampleApp.Model;
+using WebAPISampleApp.Service;
 
 namespace WebAPISampleApp.Controllers
 {
@@ -13,25 +14,23 @@ namespace WebAPISampleApp.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        private readonly MyDbContext _context;
+        private readonly ICategoryRepository _repository;
 
-        public CategoryController(MyDbContext context)
+        public CategoryController(ICategoryRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
 
         [HttpGet]
         public IActionResult GetAll()
         {
-            var Categories = _context.categories.ToList();
-
-            return Ok(Categories);
+            return Ok(_repository.GetCategories());
         }
 
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            var category = _context.categories.SingleOrDefault(cat => cat.CatId.Equals(id));
+            var category = _repository.GetCategory(id);
 
             if (category is null)
             {
@@ -46,15 +45,9 @@ namespace WebAPISampleApp.Controllers
         {
             try
             {
-                var newCategory = new Category()
-                {
-                    Name = model.Name
-                };
+                var newCat = _repository.AddCategory(model);
 
-                _context.Add(newCategory);
-                _context.SaveChanges();
-
-                return Ok(newCategory);
+                return Ok(newCat);
             }
             catch (Exception)
             {
@@ -66,33 +59,27 @@ namespace WebAPISampleApp.Controllers
         [HttpPut("{id}")]
         public IActionResult Update(int id, CategoryModel model)
         {
-            var selectedCategory = _context.categories.SingleOrDefault(cat => cat.CatId.Equals(id));
-
-            if (selectedCategory is null)
+            if (_repository.UpdateCategory(id, model))
             {
-                return NotFound();
+                return NoContent();
             }
-
-            selectedCategory.Name = model.Name;
-            _context.SaveChanges();
-
-            return NoContent();
+            else
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         [HttpDelete("{id}")]
         public IActionResult Remove(int id)
         {
-            var selectedCategory = _context.categories.SingleOrDefault(cat => cat.CatId.Equals(id));
-
-            if (selectedCategory is null)
+            if (_repository.DeleteCategory(id))
             {
-                return NotFound();
+                return NoContent();
             }
-
-            _context.categories.Remove(selectedCategory);
-            _context.SaveChanges();
-
-            return NoContent();
+            else
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }       
         }
 
 

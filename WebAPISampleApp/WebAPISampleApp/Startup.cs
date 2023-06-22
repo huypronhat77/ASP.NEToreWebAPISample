@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebAPISampleApp.Data;
+using WebAPISampleApp.Service;
 
 namespace WebAPISampleApp
 {
@@ -34,6 +35,11 @@ namespace WebAPISampleApp
             services.AddDbContext<MyDbContext>(options => {
                 options.UseSqlServer(Configuration.GetConnectionString("connectionString"));
             });
+
+            // Đăng ký repository, để hệ thống biết đại diện cũa ICategoryRepository là CategoryRepository
+            // Sau này có thể thay thế CategoryRepository bằng 1 class khác cho mục đích testing mà ko ảnh hưởng đến app.
+            // Khi dùng Reposotory pattern nên dùng AddScoped
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
 
             services.AddSwaggerGen(c =>
             {
