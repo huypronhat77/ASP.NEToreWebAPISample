@@ -40,6 +40,7 @@ namespace WebAPISampleApp
             // Sau này có thể thay thế CategoryRepository bằng 1 class khác cho mục đích testing mà ko ảnh hưởng đến app.
             // Khi dùng Reposotory pattern nên dùng AddScoped
             services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IProductRepository, ProductRepository>();
 
             services.AddSwaggerGen(c =>
             {

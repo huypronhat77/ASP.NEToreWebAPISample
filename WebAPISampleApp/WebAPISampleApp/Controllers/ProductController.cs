@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebAPISampleApp.Model;
+using WebAPISampleApp.Service;
+using static WebAPISampleApp.CommonMethod.Common;
 
 namespace WebAPISampleApp.Controllers
 {
@@ -12,12 +14,17 @@ namespace WebAPISampleApp.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private static List<Product> Products = new List<Product>();
+        private IProductRepository _repository;
+
+        public ProductController(IProductRepository repository)
+        {
+            _repository = repository;
+        }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public IActionResult GetAll([FromQuery] ProductFilterOption productFilterOption, ProducSorting sorting)
         {
-            return Ok(Products);
+            return Ok(_repository.GetAll(productFilterOption, sorting));
         }
 
         [HttpGet("{id}")]
@@ -25,54 +32,36 @@ namespace WebAPISampleApp.Controllers
         {
             try
             {
-                var seletedProdut = Products.SingleOrDefault(p => p.Id.Equals(Guid.Parse(id)));
-
-                if (seletedProdut is null)
-                {
-                    return NotFound();
-                }
-
-                return Ok(seletedProdut);
+                return Ok(_repository.GetById(id));
             }
             catch (Exception)
             {
-
                 return BadRequest();
             }
 
         }
 
         [HttpPost]
-        public IActionResult Create(ProductVM productVM)
+        public IActionResult Create(ProductModel model)
         {
-            Product product = new Product()
-            {
-                Id = Guid.NewGuid(),
-                Name = productVM.Name,
-                Price = productVM.Price
-            };
-            Products.Add(product);
+            var data = _repository.Add(model);
 
-            return Ok( new { Success= true, Data = product });
+            return Ok( new { Success= true, Data = data });
         }
 
         [HttpPut("{id}")]
-        public IActionResult Edit(string id, ProductVM editProduct)
+        public IActionResult Edit(string id, ProductModel editProduct)
         {
             try
             {
-                var seletedProdut = Products.SingleOrDefault(p => p.Id.Equals(Guid.Parse(id)));
+                var isSuccess = _repository.Update(id, editProduct);
 
-                if (seletedProdut is null)
+                if (!isSuccess)
                 {
                     return NotFound();
                 }
 
-
-                seletedProdut.Name = editProduct.Name;
-                seletedProdut.Price = editProduct.Price;
-
-                return Ok(new { Success = true, Data = seletedProdut});
+                return StatusCode(StatusCodes.Status204NoContent);
             }
             catch (Exception)
             {
@@ -86,16 +75,14 @@ namespace WebAPISampleApp.Controllers
         {
             try
             {
-                var seletedProdut = Products.SingleOrDefault(p => p.Id.Equals(Guid.Parse(id)));
+                var isSuccess = _repository.Remove(id);
 
-                if (seletedProdut is null)
+                if (!isSuccess)
                 {
                     return NotFound();
                 }
 
-                Products.Remove(seletedProdut);
-
-                return Ok();
+                return StatusCode(StatusCodes.Status204NoContent);
             }
             catch (Exception)
             {

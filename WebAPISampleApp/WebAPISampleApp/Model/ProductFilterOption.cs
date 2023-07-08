@@ -5,14 +5,11 @@ using System.Threading.Tasks;
 
 namespace WebAPISampleApp.Model
 {
-    public class ProductVM
+    public class ProductFilterOption
     {
         public string Name { get; set; }
-        public int Price { get; set; }
-    }
-
-    public class Product : ProductVM
-    {
-        public Guid Id { get; set; }
+        public double? MinPrice { get; set; }
+        public double? MaxPrice { get; set; }
+        public string category { get; set; }
     }
 }
