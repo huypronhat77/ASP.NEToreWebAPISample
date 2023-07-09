@@ -22,9 +22,9 @@ namespace WebAPISampleApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll([FromQuery] ProductFilterOption productFilterOption, ProducSorting sorting)
+        public IActionResult GetAll([FromQuery] ProductFilterOption productFilterOption, ProducSorting sorting, int pageIndex  = 1)
         {
-            return Ok(_repository.GetAll(productFilterOption, sorting));
+            return Ok(_repository.GetAll(productFilterOption, sorting, pageIndex));
         }
 
         [HttpGet("{id}")]

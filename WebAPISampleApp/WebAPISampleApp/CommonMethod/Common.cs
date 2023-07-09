@@ -14,8 +14,8 @@ namespace WebAPISampleApp.CommonMethod
         #region Product
         public enum ProducSorting
         {
-            Name_Desc,
             Name_Asc,
+            Name_Desc,
             Price_Asc,
             Price_Desc,
 
@@ -23,6 +23,8 @@ namespace WebAPISampleApp.CommonMethod
 
         public static IQueryable<Product> SortProduct(IQueryable<Product> currentList, ProducSorting sorting)
         {
+            currentList = currentList.OrderBy(p => p.Name);
+
             if (Enum.TryParse(sorting.ToString(), out ProducSorting sortType))
             {
                 switch (sortType)
@@ -42,10 +44,6 @@ namespace WebAPISampleApp.CommonMethod
                     default:
                         break;
                 }
-            }
-            else
-            {
-                currentList = currentList.OrderBy(p => p.Name);
             }
 
             return currentList;

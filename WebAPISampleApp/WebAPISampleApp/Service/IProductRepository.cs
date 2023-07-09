@@ -9,6 +9,6 @@ namespace WebAPISampleApp.Service
 {
     public interface IProductRepository : IRepository<ProductVM, ProductModel>
     {
-        List<ProductVM> GetAll(ProductFilterOption filterOptions, ProducSorting sorting);
+        List<ProductVM> GetAll(ProductFilterOption filterOptions, ProducSorting sorting, int page);
     }
 }

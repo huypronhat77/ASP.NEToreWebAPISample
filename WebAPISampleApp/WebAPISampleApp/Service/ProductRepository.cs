@@ -13,6 +13,7 @@ namespace WebAPISampleApp.Service
     public class ProductRepository : IProductRepository
     {
         private MyDbContext _context;
+        private static int PAGE_SIZE {get; set;} = 5;
         public ProductRepository(MyDbContext context)
         {
             _context = context;
@@ -58,19 +59,23 @@ namespace WebAPISampleApp.Service
             }).ToList();
         }
 
-        public List<ProductVM> GetAll(ProductFilterOption filterOptions, ProducSorting sorting)
+        public List<ProductVM> GetAll(ProductFilterOption filterOptions, ProducSorting sorting, int pageIndex)
         {
             // Use AsQueryAble so that the list will filter at the Database
             // instead of getting all record and query on our sever 
-            var result = _context.products.Include(cat => cat.Category).AsQueryable();
+            var allProducts = _context.products.Include(cat => cat.Category).AsQueryable();
 
             #region Filering
-            result = Common.FilterProduct(result, filterOptions);
+            allProducts = Common.FilterProduct(allProducts, filterOptions);
             #endregion Filtering
 
             #region Sorting
-            result = Common.SortProduct(result, sorting);
+            allProducts = Common.SortProduct(allProducts, sorting);
             #endregion Sorting
+
+            #region Paged
+            var result = PagedList<Product>.Create(allProducts, pageIndex, PAGE_SIZE);
+            #endregion Paged
 
             return result.Select(x => new ProductVM()
             {
