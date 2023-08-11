@@ -15,7 +15,8 @@ namespace WebAPISampleApp.Service
             PageIndex = pageIndex;
             // Làm tròn tổng số trang bằng cách sử dụng hàm Ceiling
             // Do hàm này là kiểu double nên chúng ta phải parse vên int
-            // Hàm này nhận tham số kiểu double nên chúng ta phải ép kiểu 1 trong 2 thằng sang double để tránh việc số nguyên (int) chia số nguyên (int)
+            // Hàm này nhận tham số kiểu double nên chúng ta phải ép kiểu 1 trong 2 thằng sang double
+            // để tránh việc số nguyên (int) chia số nguyên (int)
             TotalPage = (int)Math.Ceiling(count / (double)pageSize);
 
             // Về cơ bản PagedList kế thưa từ List nên nó sẽ như list.

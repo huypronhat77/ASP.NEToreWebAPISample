@@ -32,7 +32,19 @@ namespace WebAPISampleApp.Data
                     .WithMany(p => p.OrderDetails)
                     .HasForeignKey(od => od.ProdId);
 
-            
+
+                
+            });
+
+            modelBuilder.Entity<User>(u => {
+                u.ToTable("Users");
+                u.HasKey(u => u.Id);
+                u.HasIndex(u => u.UserName).IsUnique();
+                
+                u.Property(u => u.UserName).HasMaxLength(100).IsRequired();
+                u.Property(u => u.FullName).HasMaxLength(100);
+                u.Property(u => u.Email).HasMaxLength(100);
+                u.Property(u => u.Password).HasMaxLength(250).IsRequired();
             });
 
         }
@@ -43,6 +55,7 @@ namespace WebAPISampleApp.Data
         public DbSet<Category> categories { get; set; }
         public DbSet<Order> orders { get; set; }
         public DbSet<OrderDetail> orderDetails { get; set; }
+        public DbSet<User> users { get; set; }
         #endregion
 
     }
